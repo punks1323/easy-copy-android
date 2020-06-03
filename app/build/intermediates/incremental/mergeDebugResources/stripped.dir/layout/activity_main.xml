@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+                                                  
+                                              
+
+    
+
+                 
+                            
+                                                            
+
+           
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical" android:tag="layout/activity_main_0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" tools:context=".screen.home.HomeActivity">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:tag="binding_1"                 
+            android:textColor="#000000"
+            android:textSize="33sp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="binding_2"                                          
+                                                             
+            android:text="Choose Root" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:tag="binding_3"           
+            android:textColor="#000000"
+            android:textSize="33sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="binding_4"                                          
+                                                            
+                android:text="Connect" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="binding_5"                                         
+                                                             
+                android:text="Select File" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="binding_6"                                         
+                                                               
+                android:text="Disconnect" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+         

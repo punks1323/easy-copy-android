@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".screen.home.HomeActivity">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.easycopy.screen.home.HomeViewModel" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@={viewModel.selectedDir}"
+            android:textColor="#000000"
+            android:textSize="33sp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="@{!viewModel.state.equals(viewModel.CONNECTED)}"
+            android:onClick="@{()->viewModel.choseRootDir()}"
+            android:text="Choose Root" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@={viewModel.state}"
+            android:textColor="#000000"
+            android:textSize="33sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="@{!viewModel.state.equals(viewModel.CONNECTED)}"
+                android:onClick="@{()->viewModel.connect()}"
+                android:text="Connect" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="@{viewModel.state.equals(viewModel.CONNECTED)}"
+                android:onClick="@{()->viewModel.openFile()}"
+                android:text="Select File" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="@{viewModel.state.equals(viewModel.CONNECTED)}"
+                android:onClick="@{()->viewModel.disconnect()}"
+                android:text="Disconnect" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>
