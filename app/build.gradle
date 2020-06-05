@@ -81,4 +81,8 @@ dependencies {
     compileOnly "org.projectlombok:lombok:$lombok"
     annotationProcessor "org.projectlombok:lombok:$lombok"
 
+    // web socket
+    def stompVersion = "1.6.4"
+    implementation "com.github.NaikSoftware:StompProtocolAndroid:$stompVersion"
+
 }

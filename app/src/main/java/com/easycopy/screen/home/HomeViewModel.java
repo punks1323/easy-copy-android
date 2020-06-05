@@ -95,6 +95,7 @@ public class HomeViewModel extends BaseViewModel<HomeNavigator> {
         OkHttpClient client = builder.build();
 
         Request request = new Request.Builder().url("ws://192.168.0.108:8080/binary").build();
+        //Request request = new Request.Builder().url("ws://192.168.0.108:8080/websocket").build();
         EchoWebSocketListener listener = new EchoWebSocketListener();
         ws = client.newWebSocket(request, listener);
         client.dispatcher().executorService().shutdown();
