@@ -1,0 +1,71 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+
+    def globalConfiguration = rootProject.extensions.getByName("ext")
+
+    compileSdkVersion globalConfiguration.getAt("androidCompileSdkVersion")
+    buildToolsVersion globalConfiguration.getAt("androidBuildToolsVersion")
+
+    defaultConfig {
+        applicationId globalConfiguration.getAt("androidApplicationId")
+        minSdkVersion globalConfiguration.getAt("androidMinSdkVersion")
+        targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
+
+        versionCode globalConfiguration.getAt("androidVersionCode")
+        versionName globalConfiguration.getAt("androidVersionName")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    dataBinding {
+        enabled true
+    }
+
+}
+
+dependencies {
+    implementation project(path: ':data')
+    implementation project(path: ':use-case')
+    def presentationDependencies = rootProject.ext.presentationDependencies
+
+
+    implementation presentationDependencies.kotlinStdlib
+    implementation presentationDependencies.kotlinCoreVersion
+
+    implementation presentationDependencies.appcompat
+    implementation presentationDependencies.constraintlayout
+    implementation presentationDependencies.timber
+
+    //Dependency Injection
+    implementation presentationDependencies.dagger
+    implementation presentationDependencies.daggerAndroidSupport
+    annotationProcessor presentationDependencies.daggerCompiler
+    annotationProcessor presentationDependencies.daggerAndroidProcessor
+
+    //RxJava
+    implementation presentationDependencies.rxJava
+    implementation presentationDependencies.rxAndroid
+    implementation presentationDependencies.retrofit2Rxjava2Adapter
+
+    // view model
+    implementation presentationDependencies.lifecycleExtensions
+    implementation presentationDependencies.lifecycleCommonJava8
+
+    implementation presentationDependencies.documentFile
+
+    //lombok
+    compileOnly presentationDependencies.lombok
+    annotationProcessor presentationDependencies.lombok
+}

@@ -15,8 +15,6 @@ import com.easycopy.data.DataManager;
 import com.easycopy.data.DataManagerImpl;
 import com.easycopy.data.local.pref.PrefManager;
 import com.easycopy.data.local.pref.PrefManagerImpl;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,13 +44,6 @@ public class ApplicationModule {
     @PreferenceInfo
     String providesSharedPrefName() {
         return AppConstants.PREF_NAME;
-    }
-
-    @Provides
-    @Singleton
-    ObjectMapper providesObjectMapper() {
-        return new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Provides

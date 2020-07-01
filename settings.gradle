@@ -1,2 +1,4 @@
+include ':use-case'
+include ':data'
 rootProject.name='Easy Copy'
-include ':app'
+include ':presentation'

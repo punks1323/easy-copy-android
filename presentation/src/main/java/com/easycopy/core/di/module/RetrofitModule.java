@@ -3,6 +3,8 @@ package com.easycopy.core.di.module;
 import com.easycopy.BuildConfig;
 import com.easycopy.constants.AppConstants;
 import com.easycopy.core.di.qualifier.MooLiteBaseUrl;
+import com.easycopy.data.device.WSConnectorImpl;
+import com.easycopy.use_case.WSConnector;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.concurrent.TimeUnit;
@@ -12,9 +14,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by pankaj on 27,June,2019
@@ -74,7 +74,7 @@ public class RetrofitModule {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }*/
-        builder.callTimeout(0, TimeUnit.MILLISECONDS)   //0 means infinite
+       /* builder.callTimeout(0, TimeUnit.MILLISECONDS)   //0 means infinite
                 .connectTimeout(6, TimeUnit.MINUTES)
                 .readTimeout(6, TimeUnit.MINUTES)
                 .writeTimeout(6, TimeUnit.MINUTES);
@@ -82,7 +82,7 @@ public class RetrofitModule {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        builder.addInterceptor(logging);
+        builder.addInterceptor(logging);*/
         return builder.build();
     }
 
@@ -92,9 +92,15 @@ public class RetrofitModule {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
-                .addConverterFactory(JacksonConverterFactory.create())
+                //.addConverterFactory(JacksonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    WSConnector providesWSConnector() {
+        return new WSConnectorImpl("ws://192.168.0.108:8080/websocket");
     }
 
 }
