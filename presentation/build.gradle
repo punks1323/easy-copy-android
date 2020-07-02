@@ -1,6 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+kapt {
+    generateStubs = true
+}
 
 android {
 
@@ -29,8 +34,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        enabled true
+    buildFeatures{
+        dataBinding = true
+        // for view binding :
+        // viewBinding = true
     }
 
 }
@@ -43,16 +50,18 @@ dependencies {
 
     implementation presentationDependencies.kotlinStdlib
     implementation presentationDependencies.kotlinCoreVersion
+    kapt presentationDependencies.dataBindingCompiler
 
     implementation presentationDependencies.appcompat
     implementation presentationDependencies.constraintlayout
+    implementation presentationDependencies.material
     implementation presentationDependencies.timber
 
     //Dependency Injection
     implementation presentationDependencies.dagger
     implementation presentationDependencies.daggerAndroidSupport
-    annotationProcessor presentationDependencies.daggerCompiler
-    annotationProcessor presentationDependencies.daggerAndroidProcessor
+    kapt presentationDependencies.daggerCompiler
+    kapt presentationDependencies.daggerAndroidProcessor
 
     //RxJava
     implementation presentationDependencies.rxJava

@@ -11,6 +11,8 @@ import com.easycopy.screen.home.model.FileInfo
 import com.easycopy.use_case.WSConnector
 import com.easycopy.use_case.WSConnector.ConnectionListener
 import com.easycopy.use_case.model.ConnectionStatus
+import com.easycopy.use_case.model.ConnectionStatus.ERROR
+import com.easycopy.use_case.model.ConnectionStatus.UNKNOWN
 import com.easycopy.utils.StringUtils
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -36,6 +38,14 @@ class HomeViewModel @Inject constructor(private val dataManager: DataManager, pr
                 object : ConnectionListener {
                     override fun connectionCallback(connectionStatus: ConnectionStatus) {
                         state.set(connectionStatus.name)
+
+                        when(connectionStatus){
+                            ConnectionStatus.CONNECTED->{}
+                            ConnectionStatus.DISCONNECTED -> TODO()
+                            ERROR -> TODO()
+                            UNKNOWN -> TODO()
+                            else -> TODO()
+                        }
                     }
                 }
         )
