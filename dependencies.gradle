@@ -36,6 +36,7 @@ ext {
     converterJackson = '2.5.0'
     stompVersion = '1.6.4'
     documentFile = '1.0.1'
+    nanoHttpServerVersion = '2.3.1'
 
     presentationDependencies = [
             kotlinStdlib           : "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}",
@@ -59,7 +60,8 @@ ext {
             lombok                 : "org.projectlombok:lombok:${lombok}",
             lifecycleExtensions    : "androidx.lifecycle:lifecycle-extensions:${lifecycleVersion}",
             lifecycleCommonJava8   : "androidx.lifecycle:lifecycle-common-java8:${lifecycleVersion}",
-            documentFile           : "androidx.documentfile:documentfile:${documentFile}"
+            documentFile           : "androidx.documentfile:documentfile:${documentFile}",
+            nanoHttpServer           : "org.nanohttpd:nanohttpd:${nanoHttpServerVersion}"
 
     ]
 

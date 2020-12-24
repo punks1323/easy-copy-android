@@ -34,7 +34,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    buildFeatures{
+    buildFeatures {
         dataBinding = true
         // for view binding :
         // viewBinding = true
@@ -77,4 +77,7 @@ dependencies {
     //lombok
     compileOnly presentationDependencies.lombok
     annotationProcessor presentationDependencies.lombok
+
+    implementation presentationDependencies.nanoHttpServer
+
 }

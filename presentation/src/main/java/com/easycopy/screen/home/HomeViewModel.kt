@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(private val dataManager: DataManager, pr
     var selectedDir = ObservableField<String>()
 
     fun choseRootDir() {
-        navigator!!.openDirectory(REQUEST_CODE_READ_DIR_TREE)
+        navigator?.openDirectory(REQUEST_CODE_READ_DIR_TREE)
     }
 
     fun connect() {
@@ -39,8 +39,9 @@ class HomeViewModel @Inject constructor(private val dataManager: DataManager, pr
                     override fun connectionCallback(connectionStatus: ConnectionStatus) {
                         state.set(connectionStatus.name)
 
-                        when(connectionStatus){
-                            ConnectionStatus.CONNECTED->{}
+                        when (connectionStatus) {
+                            ConnectionStatus.CONNECTED -> {
+                            }
                             ConnectionStatus.DISCONNECTED -> TODO()
                             ERROR -> TODO()
                             UNKNOWN -> TODO()
@@ -56,15 +57,15 @@ class HomeViewModel @Inject constructor(private val dataManager: DataManager, pr
     }
 
     fun openFile() {
-        navigator!!.openFile(REQUEST_CODE_READ_FILE)
+        navigator?.openFile(REQUEST_CODE_READ_FILE)
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?, contentResolver: ContentResolver) {
         try {
             if (requestCode == REQUEST_CODE_READ_FILE && resultCode == Activity.RESULT_OK) {
                 if (resultData != null) {
-                    val uri = resultData.data
-                    val parcelFileDescriptor = contentResolver.openFileDescriptor(uri!!, "r")
+                    val uri = resultData.data!!
+                    val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
                     val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
                     val fileInputStream = FileInputStream(fileDescriptor)
                     val os = ByteArrayOutputStream()

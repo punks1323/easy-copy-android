@@ -19,7 +19,7 @@ abstract class BaseViewModel<N : BaseNavigator?> : ViewModel() {
     }
 
     val navigator: N?
-        get() = mNavigator!!.get()
+        get() = mNavigator?.get()
 
     fun setNavigator(navigator: N) {
         mNavigator = WeakReference(navigator)
