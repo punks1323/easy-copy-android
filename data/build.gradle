@@ -20,7 +20,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -40,6 +40,7 @@ android {
 dependencies {
     def dataDependencies = rootProject.ext.dataDependencies
 
+    implementation dataDependencies.support
     implementation dataDependencies.timber
     implementation dataDependencies.okHttp
     implementation dataDependencies.rxJava
@@ -50,7 +51,7 @@ dependencies {
     implementation dataDependencies.loggingInterceptor
     implementation dataDependencies.retrofit
     implementation dataDependencies.converterJackson
-    implementation dataDependencies.StompProtocolAndroid
+    implementation dataDependencies.stompProtocolAndroid
 
 
     implementation project(':use-case')

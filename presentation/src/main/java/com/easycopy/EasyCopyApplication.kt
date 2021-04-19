@@ -2,12 +2,10 @@ package com.easycopy
 
 import android.app.Application
 import com.easycopy.core.di.component.DaggerApplicationComponent
-import com.easycopy.utils.InitServer
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import timber.log.Timber
-import timber.log.Timber.DebugTree
 import javax.inject.Inject
 
 /**
@@ -22,13 +20,15 @@ class EasyCopyApplication : Application(), HasAndroidInjector {
 
     override fun onCreate() {
         super.onCreate()
-        Timber.plant(DebugTree())
+
+        Timber.plant(object : Timber.DebugTree() {
+            override fun createStackElementTag(element: StackTraceElement): String? {
+                return "(${element.fileName}:${element.lineNumber})#${element.methodName}"
+            }
+        })
 
         DaggerApplicationComponent.builder().application(this).build()
                 .inject(this)
-
-        val a = InitServer(8081);
-
 
     }
 

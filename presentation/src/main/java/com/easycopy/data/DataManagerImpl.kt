@@ -10,16 +10,4 @@ import com.easycopy.data.local.pref.PrefManager
  */
 class DataManagerImpl(private val prefManager: PrefManager) : DataManager {
 
-    override var selectedDir: String?
-        get() = prefManager.selectedDir
-        set(selectedDir) {
-            prefManager.selectedDir = selectedDir
-        }
-
-    override var selectedDirUri: String?
-        get() = prefManager.selectedDirUri
-        set(selectedDirUri) {
-            prefManager.selectedDirUri = selectedDirUri
-        }
-
 }

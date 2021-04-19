@@ -53,6 +53,7 @@ dependencies {
     kapt presentationDependencies.dataBindingCompiler
 
     implementation presentationDependencies.appcompat
+    implementation presentationDependencies.support
     implementation presentationDependencies.constraintlayout
     implementation presentationDependencies.material
     implementation presentationDependencies.timber
@@ -78,6 +79,8 @@ dependencies {
     compileOnly presentationDependencies.lombok
     annotationProcessor presentationDependencies.lombok
 
-    implementation presentationDependencies.nanoHttpServer
+    // QR Code
+    implementation presentationDependencies.zxingAndroidEmbedded
+    implementation presentationDependencies.converterJackson
 
 }

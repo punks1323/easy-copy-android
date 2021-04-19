@@ -1,10 +1,14 @@
 package com.easycopy.core.di.module
 
+import android.content.Context
 import com.easycopy.BuildConfig
 import com.easycopy.constants.AppConstants
+import com.easycopy.core.di.qualifier.ApplicationContext
 import com.easycopy.core.di.qualifier.MooLiteBaseUrl
+import com.easycopy.data.Constant
 import com.easycopy.data.device.WSConnectorImpl
 import com.easycopy.use_case.WSConnector
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -89,7 +93,13 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun providesWSConnector(): WSConnector {
-        return WSConnectorImpl("ws://192.168.0.108:8080/websocket")
+    fun providesWSConnector(@ApplicationContext context: Context): WSConnector {
+        return WSConnectorImpl(Constant.BASE_URL, context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesObjectMapper():ObjectMapper {
+        return ObjectMapper();
     }
 }

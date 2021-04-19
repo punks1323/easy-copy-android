@@ -6,6 +6,5 @@ package com.easycopy.data.local.pref
  * @since 2020-06-03
  */
 interface PrefManager {
-    var selectedDir: String?
-    var selectedDirUri: String?
+
 }

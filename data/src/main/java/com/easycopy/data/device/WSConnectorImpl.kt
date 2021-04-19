@@ -1,94 +1,68 @@
 package com.easycopy.data.device
 
+import android.content.Context
+import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.easycopy.data.Constant
 import com.easycopy.use_case.WSConnector
-import com.easycopy.use_case.model.ConnectionStatus
-import io.reactivex.FlowableSubscriber
-import org.reactivestreams.Subscription
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import ua.naiksoftware.stomp.dto.StompHeader
-import ua.naiksoftware.stomp.dto.StompMessage
 
-class WSConnectorImpl(private val baseUrl: String) : WSConnector {
-    private val msgUploadUrl = "/app/send"
-    private val msgDownloadUrl = "/topic/messages"
 
-    // baseUrl;        //ws://192.168.0.108:8080/websocket
+class WSConnectorImpl(private val baseUrl: String, private val context: Context) : WSConnector {
+
     lateinit var stompClient: StompClient;
 
-    override fun connect(connectionListener: WSConnector.ConnectionListener) {
+    override fun connect() {
 
-        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, baseUrl);
-        stompClient.withClientHeartbeat(3000).withServerHeartbeat(3000);
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, baseUrl)
+        //stompClient.withClientHeartbeat(1000).withServerHeartbeat(1000)
 
-        stompClient.lifecycle()
-                .subscribe(object : FlowableSubscriber<LifecycleEvent> {
-                    override fun onComplete() {
-                        Timber.i("Reading web socket lifecycle completed")
-                    }
+        val dispLifecycle: Disposable = stompClient.lifecycle()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { lifecycleEvent ->
+                    Timber.w(lifecycleEvent.toString())
+                    Timber.w(lifecycleEvent.type.name)
 
-                    override fun onSubscribe(s: Subscription) {
-                        Timber.i("Reading lifecycle for web socket")
-                    }
-
-                    override fun onNext(t: LifecycleEvent?) {
-                        when (t?.type) {
-                            LifecycleEvent.Type.OPENED -> {
-                                Timber.d("Stomp connection opened");
-                                connectionListener.connectionCallback(ConnectionStatus.CONNECTED)
-                            }
-                            LifecycleEvent.Type.ERROR -> {
-                                Timber.d(t.getException(), "Error");
-                                connectionListener.connectionCallback(ConnectionStatus.ERROR)
-                            }
-                            LifecycleEvent.Type.CLOSED -> {
-                                Timber.d("Stomp connection closed");
-                                connectionListener.connectionCallback(ConnectionStatus.DISCONNECTED)
-                            }
-                            else -> {
-                                Timber.d("Unknown state %s", t?.type?.name);
-                                connectionListener.connectionCallback(ConnectionStatus.UNKNOWN)
-                            }
+                    when (lifecycleEvent.type) {
+                        LifecycleEvent.Type.OPENED -> {
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Constant.WS_ACTION_CONNECTED))
+                        }
+                        LifecycleEvent.Type.ERROR -> {
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Constant.WS_ACTION_ERROR))
+                            Timber.w(lifecycleEvent.exception)
+                        }
+                        LifecycleEvent.Type.CLOSED -> {
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Constant.WS_ACTION_DISCONNECTED))
+                        }
+                        LifecycleEvent.Type.FAILED_SERVER_HEARTBEAT -> {
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Constant.FAILED_SERVER_HEARTBEAT))
+                        }
+                        else -> {
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Constant.WS_ACTION_UNKNOWN))
                         }
                     }
-
-                    override fun onError(t: Throwable?) {
-                        Timber.e(t)
-                    }
-
-                })
+                }
 
         val headers = listOf(StompHeader("LOGIN", "guest"), StompHeader("PASSCODE", "guest"))
         stompClient.connect(headers);
     }
 
-    override fun subscribe(url: String, subscribeListener: WSConnector.SubscribeListener) {
-
-        stompClient.topic(url)
-                .subscribe(object : FlowableSubscriber<StompMessage> {
-                    override fun onComplete() {
-                        Timber.i("Waiting for incoming message: onComplete")
-                    }
-
-                    override fun onSubscribe(s: Subscription) {
-                        Timber.i("Waiting for incoming message: onSubscribe")
-                    }
-
-                    override fun onNext(t: StompMessage?) {
-                        Timber.d("Received:: %s", t?.payload)
-                    }
-
-                    override fun onError(t: Throwable?) {
-                        Timber.e(t)
-                    }
-
-                })
+    override fun send(url: String, msg: String) {
+        stompClient.send(url, msg).subscribe({ },
+                { t -> Timber.w(t) })
     }
 
-    override fun send(url: String, msg: String) {
-        stompClient.send(url, msg).subscribe();
+    override fun subscribe(url: String, subscribeListener: WSConnector.SubscribeListener) {
+        stompClient.topic(url).subscribe({ topicMessage -> subscribeListener.onMessage(topicMessage.payload) }
+        ,{e-> Timber.w(e)})
     }
 
     override fun disconnect() {

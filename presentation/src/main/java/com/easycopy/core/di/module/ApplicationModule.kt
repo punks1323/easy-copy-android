@@ -14,6 +14,8 @@ import com.easycopy.data.DataManager
 import com.easycopy.data.DataManagerImpl
 import com.easycopy.data.local.pref.PrefManager
 import com.easycopy.data.local.pref.PrefManagerImpl
+import com.easycopy.screen.home.sub_modules.file_manager.DirReader
+import com.easycopy.screen.home.sub_modules.file_manager.DirReaderImpl
 import dagger.Module
 import dagger.Provides
 import java.util.*
@@ -74,5 +76,11 @@ class ApplicationModule {
     @Singleton
     fun providesDataManager(prefManager: PrefManager): DataManager {
         return DataManagerImpl(prefManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDirReader(@ApplicationContext context: Context): DirReader {
+        return DirReaderImpl(context)
     }
 }

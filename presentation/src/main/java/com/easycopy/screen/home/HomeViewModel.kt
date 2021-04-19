@@ -1,23 +1,12 @@
 package com.easycopy.screen.home
 
-import android.app.Activity
-import android.content.ContentResolver
-import android.content.Intent
 import androidx.databinding.ObservableField
+import com.easycopy.data.Constant
 import com.easycopy.data.DataManager
 import com.easycopy.screen.base.BaseViewModel
-import com.easycopy.screen.home.model.DirInfo
-import com.easycopy.screen.home.model.FileInfo
 import com.easycopy.use_case.WSConnector
-import com.easycopy.use_case.WSConnector.ConnectionListener
-import com.easycopy.use_case.model.ConnectionStatus
-import com.easycopy.use_case.model.ConnectionStatus.ERROR
-import com.easycopy.use_case.model.ConnectionStatus.UNKNOWN
-import com.easycopy.utils.StringUtils
+import com.fasterxml.jackson.databind.ObjectMapper
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.FileInputStream
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -25,104 +14,37 @@ import javax.inject.Inject
  * @version 1.0
  * @since 2020-06-01
  */
-class HomeViewModel @Inject constructor(private val dataManager: DataManager, private val WSConnector: WSConnector) : BaseViewModel<HomeNavigator?>() {
-    var state = ObservableField<String>()
-    var selectedDir = ObservableField<String>()
+class HomeViewModel @Inject constructor(private val objectMapper: ObjectMapper, private val dataManager: DataManager, private val wsConnector: WSConnector) : BaseViewModel<HomeNavigator?>() {
 
-    fun choseRootDir() {
-        navigator?.openDirectory(REQUEST_CODE_READ_DIR_TREE)
-    }
+    var state = ObservableField<String>()
+    var uuid: String = "";
+    var apiKey: String = "";
 
     fun connect() {
-        WSConnector.connect(
-                object : ConnectionListener {
-                    override fun connectionCallback(connectionStatus: ConnectionStatus) {
-                        state.set(connectionStatus.name)
-
-                        when (connectionStatus) {
-                            ConnectionStatus.CONNECTED -> {
-                            }
-                            ConnectionStatus.DISCONNECTED -> TODO()
-                            ERROR -> TODO()
-                            UNKNOWN -> TODO()
-                            else -> TODO()
-                        }
-                    }
-                }
-        )
+        wsConnector.connect()
     }
 
-    fun disconnect() {
-        WSConnector.disconnect()
-    }
+    fun init(stringExtra: String?) {
+        uuid = objectMapper.readTree(stringExtra).get("uuid").asText();
+        apiKey = objectMapper.readTree(stringExtra).get("apiKey").asText();
 
-    fun openFile() {
-        navigator?.openFile(REQUEST_CODE_READ_FILE)
-    }
+        wsConnector.send(Constant.URL_PREFIX + uuid + "/authenticate", objectMapper.readTree(stringExtra).toString())
+        Timber.w("Yeah!")
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?, contentResolver: ContentResolver) {
-        try {
-            if (requestCode == REQUEST_CODE_READ_FILE && resultCode == Activity.RESULT_OK) {
-                if (resultData != null) {
-                    val uri = resultData.data!!
-                    val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
-                    val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
-                    val fileInputStream = FileInputStream(fileDescriptor)
-                    val os = ByteArrayOutputStream()
-                    val buffer = ByteArray(1024)
-                    var len: Int
-                    while (fileInputStream.read(buffer).also { len = it } != -1) {
-                        os.write(buffer, 0, len)
-                    }
-                    fileInputStream.close()
-                    parcelFileDescriptor.close()
-                    Timber.i("Writing started....")
-                    //ws.send(ByteString.of(os.toByteArray()));
-                    Timber.i("Writing completed....")
-                }
-            } else if (requestCode == REQUEST_CODE_READ_DIR_TREE && resultCode == Activity.RESULT_OK) {
-                if (resultData != null) {
-                    val treeUri = resultData.data
-                    val pickedDir = navigator!!.getDocumentFile(treeUri)
-                    dataManager.selectedDir = pickedDir.name
-                    dataManager.selectedDirUri = pickedDir.uri.toString()
-                    init()
-                    val dirInfo = DirInfo()
-                    dirInfo.parentDirName = pickedDir.name
-                    dirInfo.files = ArrayList()
-                    for (documentFile in pickedDir.listFiles()) {
-                        val fileInfo = FileInfo()
-                        fileInfo.isDirectory = documentFile.isDirectory
-                        fileInfo.isFile = documentFile.isFile
-                        fileInfo.name = documentFile.name
-                        fileInfo.uri = documentFile.uri.toString()
-                        fileInfo.lastModified = documentFile.lastModified()
-                        fileInfo.length = documentFile.length()
-                        dirInfo.files!!.add(fileInfo)
-                    }
-
-                    // Timber.w("JSON:: " + new ObjectMapper().writeValueAsString(dirInfo));
-                }
+        wsConnector.subscribe(Constant.TOPIC + uuid + "/android/question", object : WSConnector.SubscribeListener {
+            override fun onMessage(string: String) {
+                navigator?.serveUIRequest(string);
             }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
+        })
+
     }
 
-    fun init() {
-        val selectedPath = dataManager.selectedDir
-        selectedDir.set(if (StringUtils.isEmpty(selectedPath)) "" else selectedPath)
+    fun onTest() {
+        wsConnector.send(Constant.URL_PREFIX + uuid + "/android/answer", apiKey)
     }
 
-    companion object {
-        const val REQUEST_CODE_READ_FILE = 6666
-        const val REQUEST_CODE_READ_DIR_TREE = 6667
-        const val CONNECTED = "CONNECTED"
-        const val DISCONNECTED = "DISCONNECTED"
-        const val FAILED = "FAILED"
+    fun sendData(s: String) {
+        wsConnector.send(Constant.URL_PREFIX + uuid + "/android/answer", s)
     }
 
-    init {
-        Timber.w("CONSTRUCTOR")
-    }
 }
