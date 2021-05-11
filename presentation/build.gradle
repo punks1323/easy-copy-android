@@ -83,4 +83,7 @@ dependencies {
     implementation presentationDependencies.zxingAndroidEmbedded
     implementation presentationDependencies.converterJackson
 
+    // Runtime permission
+    implementation presentationDependencies.permission
+
 }

@@ -6,7 +6,9 @@ package com.easycopy.utils
  * @since 2020-06-03
  */
 object StringUtils {
+
     fun isEmpty(cs: CharSequence?): Boolean {
-        return cs == null || cs.length == 0
+        return cs == null || cs.isEmpty()
     }
+
 }

@@ -16,6 +16,9 @@ import com.easycopy.data.local.pref.PrefManager
 import com.easycopy.data.local.pref.PrefManagerImpl
 import com.easycopy.screen.home.sub_modules.file_manager.DirReader
 import com.easycopy.screen.home.sub_modules.file_manager.DirReaderImpl
+import com.easycopy.screen.home.sub_modules.package_manager.AppPackageManager
+import com.easycopy.screen.home.sub_modules.package_manager.AppPackageManagerImpl
+import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.Module
 import dagger.Provides
 import java.util.*
@@ -82,5 +85,11 @@ class ApplicationModule {
     @Singleton
     fun providesDirReader(@ApplicationContext context: Context): DirReader {
         return DirReaderImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAppPackageManager(@ApplicationContext context: Context,objectMapper: ObjectMapper): AppPackageManager {
+        return AppPackageManagerImpl(context,objectMapper)
     }
 }

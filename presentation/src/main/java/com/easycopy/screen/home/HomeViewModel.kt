@@ -47,4 +47,8 @@ class HomeViewModel @Inject constructor(private val objectMapper: ObjectMapper, 
         wsConnector.send(Constant.URL_PREFIX + uuid + "/android/answer", s)
     }
 
+    fun sendBasicData(s: String) {
+        wsConnector.send(Constant.URL_PREFIX + uuid + "/android/basic", s)
+    }
+
 }

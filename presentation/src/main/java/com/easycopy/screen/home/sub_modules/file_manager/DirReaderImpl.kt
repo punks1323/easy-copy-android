@@ -9,7 +9,7 @@ class DirReaderImpl(c: Context) : DirReader {
     val context: Context = c
 
     override fun getFilesAtRootDir(): ArrayList<FileInfo> {
-        val listFiles = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.listFiles()
+        val listFiles = Environment.getExternalStorageDirectory()?.listFiles()
 
         val filesList = ArrayList<FileInfo>()
         if (listFiles != null) {
